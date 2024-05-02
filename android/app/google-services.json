@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "933801595548",
+    "project_id": "aysar-47a16",
+    "storage_bucket": "aysar-47a16.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933801595548:android:767207713d241e42799359",
+        "android_client_info": {
+          "package_name": "com.example.aysar2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGKknNS7B9t1tYwAlyw3-ErtFLn2uQfpU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
