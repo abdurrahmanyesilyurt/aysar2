@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'Game1.dart';
+import 'Game2.dart';
+import 'Game3.dart';
+
 class oyunPage extends StatefulWidget {
   @override
   _oyunPageState createState() => _oyunPageState();
@@ -13,6 +17,11 @@ class _oyunPageState extends State<oyunPage> {
   ]; // Oyunlar için liste
 
   String selectedGameImage = '';
+  final Map<String, Widget> gamePages = {
+    'Resim': Game1(),
+    'Video': Game2(),
+    'Kelime': Game3(),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -42,28 +51,37 @@ class _oyunPageState extends State<oyunPage> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.0),top: Radius.circular(20.0)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: Offset(0, 3), // changes position of shadow
-                    ),
-                  ],
+              child: GestureDetector(
+                onTap: () {
+                  if (selectedGameImage.isNotEmpty) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => gamePages[games.firstWhere((game) => game['image'] == selectedGameImage)['name']]!),
+                    );
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.0),top: Radius.circular(20.0)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: selectedGameImage.isNotEmpty
+                      ? Image.asset(
+                    'resimler/$selectedGameImage',
+                    fit: BoxFit.cover,
+                  )
+                      : Center(child: Text('Lütfen bir oyun seçin'),
+                  ),
+                  height: MediaQuery.of(context).size.height * 0.8, // Ekran yüksekliğinin %80'ı kadar
                 ),
-                child: selectedGameImage.isNotEmpty
-                    ? Image.asset(
-                  'resimler/$selectedGameImage',
-                  fit: BoxFit.cover,
-                )
-                    : Center(
-                  child: Text('Lütfen bir oyun seçin'),
-                ),
-                height: MediaQuery.of(context).size.height * 0.8, // Ekran yüksekliğinin %80'ı kadar
               ),
             ),
           ),
