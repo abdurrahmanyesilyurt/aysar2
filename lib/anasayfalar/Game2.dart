@@ -100,14 +100,33 @@ class _Game2State extends State<Game2> {
   }
 
   void onOptionSelected(String option) {
+    String feedbackMessage = '';
+    bool isCorrect = option == correctOption;
+
+    Color backgroundColor;
+    if (isCorrect) {
+      correctAnswers++;
+      feedbackMessage = 'Doğru!';
+      backgroundColor = Colors.green; // Yeşil arka plan
+    } else {
+      feedbackMessage = 'Yanlış!.';
+      backgroundColor = Colors.red; // Kırmızı arka plan
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          feedbackMessage,
+          style: TextStyle(color: Colors.white), // SnackBar metin rengi
+        ),
+        backgroundColor: backgroundColor, // SnackBar arka plan rengi
+        duration: Duration(seconds: 1),
+      ),
+    );
+
     setState(() {
       selectedOption = option;
     });
-
-    if (option == correctOption) {
-      correctAnswers++;
-      print('Correct answers: $correctAnswers');
-    }
 
     // Cevap verildikten sonra bir süre bekleyip yeni soru yükle
     Future.delayed(Duration(seconds: 2), () {
@@ -124,8 +143,8 @@ class _Game2State extends State<Game2> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Game Over"),
-          content: Text("Total correct answers: $correctAnswers"),
+          title: Text("Oyun Bitti!",style: TextStyle(fontWeight: FontWeight.bold),),
+          content: Text("Toplam Doğru Sayısı: $correctAnswers",style: TextStyle(fontWeight: FontWeight.w500),),
           actions: [
             TextButton(
               child: Text("OK"),

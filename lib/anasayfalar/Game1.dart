@@ -92,14 +92,33 @@ class _Game1State extends State<Game1> {
   }
 
   void onOptionSelected(String option) {
+    String feedbackMessage = '';
+    bool isCorrect = option == correctOption;
+
+    Color backgroundColor;
+    if (isCorrect) {
+      correctAnswers++;
+      feedbackMessage = 'Doğru!';
+      backgroundColor = Colors.green; // Yeşil arka plan
+    } else {
+      feedbackMessage = 'Yanlış!.';
+      backgroundColor = Colors.red; // Kırmızı arka plan
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          feedbackMessage,
+          style: TextStyle(color: Colors.white), // SnackBar metin rengi
+        ),
+        backgroundColor: backgroundColor, // SnackBar arka plan rengi
+        duration: Duration(seconds: 1),
+      ),
+    );
+
     setState(() {
       selectedOption = option;
     });
-
-    if (option == correctOption) {
-      correctAnswers++;
-      print('Correct answers: $correctAnswers');
-    }
 
     // Cevap verildikten sonra bir süre bekleyip yeni soru yükle
     Future.delayed(Duration(seconds: 2), () {
@@ -111,13 +130,14 @@ class _Game1State extends State<Game1> {
     });
   }
 
+
   void showGameOverDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Game Over"),
-          content: Text("Total correct answers: $correctAnswers"),
+          title: Text("Oyun Bitti!",style: TextStyle(fontWeight: FontWeight.bold),),
+          content: Text("Toplam Doğru Sayısı: $correctAnswers",style: TextStyle(fontWeight: FontWeight.w500),),
           actions: [
             TextButton(
               child: Text("OK"),
@@ -150,13 +170,13 @@ class _Game1State extends State<Game1> {
         child: isLoading
             ? Center(child: CircularProgressIndicator())
             : Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Card(
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Card(
+                elevation: 8,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
