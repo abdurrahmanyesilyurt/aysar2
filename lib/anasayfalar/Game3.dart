@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class Game3 extends StatefulWidget {
@@ -19,51 +18,37 @@ class _Game3State extends State<Game3> {
   int questionCount = 0;
   String correctOption = '';
   String question = '';
+
   Future<void> fetchGameData() async {
     setState(() {
       isLoading = true;
     });
 
     try {
-      // Firestore'dan tüm soruları çek
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('games3')
-          .get();
-
-      // Tüm belgeleri listeye dönüştür
+      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('games3').get();
       List<QueryDocumentSnapshot> documents = snapshot.docs;
 
       if (documents.isNotEmpty) {
-        // Rastgele bir belge seç
         Random random = Random();
         int randomIndex = random.nextInt(documents.length);
         DocumentSnapshot selectedDoc = documents[randomIndex];
 
-        // Rastgele seçilen belgeden verileri al
         Map<String, dynamic>? data = selectedDoc.data() as Map<String, dynamic>?;
 
         if (data != null) {
-          // Belgedeki tüm "question" anahtarlarını alın
           List<String> questionKeys = data.keys.where((key) => key.startsWith('question')).toList();
 
           if (questionKeys.isNotEmpty) {
-            // Rastgele bir "question" anahtarı seç
             String randomQuestionKey = questionKeys[random.nextInt(questionKeys.length)];
             List<dynamic> questionData = data[randomQuestionKey];
             if (questionData.length >= 5) {
-              options = List<String>.from(questionData.sublist(0, 4)); // İlk 4 eleman seçenekler
-              correctOption = questionData[0]; // Doğru seçenek
-              String imagePath = questionData[4]; // 5. eleman resim yolu
-
-              // Firebase Storage'dan indirme URL'sini al
-              String downloadUrl = await FirebaseStorage.instance
-                  .ref(imagePath)
-                  .getDownloadURL();
+              options = List<String>.from(questionData.sublist(0, 4));
+              correctOption = questionData[0];
+              question = questionData[4];
 
               setState(() {
-                question = questionData[4];
                 selectedOption = '';
-                options.shuffle(); // Seçenekleri karıştır
+                options.shuffle();
               });
             } else {
               print('Error: Question data does not have enough elements.');
@@ -83,6 +68,9 @@ class _Game3State extends State<Game3> {
       setState(() {
         isLoading = false;
         questionCount++;
+        if (questionCount >= 5) {
+          showResultDialog(); // 5. sorudan sonra sonucu göster
+        }
       });
     }
   }
@@ -92,8 +80,8 @@ class _Game3State extends State<Game3> {
       selectedOption = option;
     });
 
-    // Cevap kontrolü ve kullanıcıya bildirim
-    if (option == 'CorrectOption') {
+    if (option == correctOption) {
+      correctAnswers++;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Doğru!'),
@@ -108,6 +96,38 @@ class _Game3State extends State<Game3> {
         ),
       );
     }
+
+    if (questionCount < 5) {
+      fetchGameData(); // Yeni soru getir
+    }
+  }
+
+  void showResultDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Oyun Bitti'),
+          content: Text('Toplam doğru cevap sayınız: $correctAnswers'),
+          actions: [
+            TextButton(
+              child: Text('Tamam'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Dialogu kapat
+                Navigator.of(context).pop(); // Oyundan çık
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchGameData();
   }
 
   @override
@@ -115,7 +135,10 @@ class _Game3State extends State<Game3> {
     return Scaffold(
       backgroundColor: Colors.deepOrange,
       appBar: AppBar(
-        title: Text('Kelime Oyunu',style: TextStyle(fontWeight: FontWeight.bold),),
+        title: Text(
+          'Kelime Oyunu',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.deepOrange,
       ),
       body: Padding(
@@ -135,15 +158,15 @@ class _Game3State extends State<Game3> {
                     fit: StackFit.expand,
                     children: [
                       Image.asset(
-                        'resimler/bulut.jpeg', // Fotoğrafı buraya ekleyin
-                        fit: BoxFit.fill  ,
+                        'resimler/bulut.jpeg',
+                        fit: BoxFit.fill,
                       ),
                       Container(
-                        alignment: Alignment(0.0, -0.5), // Yazıyı üst-orta hizalar
+                        alignment: Alignment(0.0, -0.5),
                         child: Padding(
                           padding: const EdgeInsets.all(5.0),
                           child: Text(
-                            '${question[4]}', // Cümle buraya gelecek
+                            question,
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
@@ -158,7 +181,7 @@ class _Game3State extends State<Game3> {
               ),
             ),
             SizedBox(height: 20),
-            ...['Option 1', 'Option 2', 'Option 3', 'CorrectOption'].map((option) => OptionButton(
+            ...options.map((option) => OptionButton(
               option: option,
               isSelected: selectedOption == option,
               onTap: () => selectOption(option),
