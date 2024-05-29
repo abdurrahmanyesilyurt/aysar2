@@ -1,25 +1,8 @@
-import 'package:aysar2/anasayfalar/Game1.dart';
 import 'package:flutter/material.dart';
 
+import 'Game1.dart';
 import 'Game2.dart';
 import 'Game3.dart';
-//
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-      ),
-      home: oyunPage(),
-    );
-  }
-}
 
 class oyunPage extends StatefulWidget {
   @override
@@ -28,17 +11,16 @@ class oyunPage extends StatefulWidget {
 
 class _oyunPageState extends State<oyunPage> {
   final List<Map<String, dynamic>> games = [
-    {'name': 'Game 1', 'description': 'Description of Game 1', 'image': 'game1.png'},
-    {'name': 'Game 2', 'description': 'Description of Game 2', 'image': 'game2.png'},
-    {'name': 'Game 3', 'description': 'Description of Game 3', 'image': 'game3.png'},
+    {'name': 'Resim', 'description': 'Resimdeki Nesnenin \nIngilizcesini Bulma \nOyunu', 'image': 'game1.webp'},
+    {'name': 'Video', 'description': 'Videodaki Repliği\n Çevirme Oyunu', 'image': 'game2.webp'},
+    {'name': 'Kelime', 'description': 'Kelime Veya Cümle \nÇevirme Oyunu', 'image': 'game3.png'},
   ]; // Oyunlar için liste
 
   String selectedGameImage = '';
-
   final Map<String, Widget> gamePages = {
-    'Game 1': Game1(),
-    'Game 2': Game2(),
-    'Game 3': Game3(),
+    'Resim': Game1(),
+    'Video': Game2(),
+    'Kelime': Game3(),
   };
 
   @override
@@ -61,7 +43,7 @@ class _oyunPageState extends State<oyunPage> {
           ),
         ),
       ),
-      backgroundColor: Colors.deepOrange,
+      backgroundColor: Colors.deepOrange, // Ekranın arka plan rengi
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -81,28 +63,24 @@ class _oyunPageState extends State<oyunPage> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(20.0),
-                      top: Radius.circular(20.0),
-                    ),
+                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.0),top: Radius.circular(20.0)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 5,
                         blurRadius: 7,
-                        offset: Offset(0, 3),
+                        offset: Offset(0, 3), // changes position of shadow
                       ),
                     ],
                   ),
                   child: selectedGameImage.isNotEmpty
                       ? Image.asset(
-                    'assets/$selectedGameImage',
+                    'resimler/$selectedGameImage',
                     fit: BoxFit.cover,
                   )
-                      : Center(
-                    child: Text('Lütfen bir oyun seçin'),
+                      : Center(child: Text('Lütfen bir oyun seçin'),
                   ),
-                  height: MediaQuery.of(context).size.height * 0.8,
+                  height: MediaQuery.of(context).size.height * 0.8, // Ekran yüksekliğinin %80'ı kadar
                 ),
               ),
             ),
@@ -128,12 +106,12 @@ class _oyunPageState extends State<oyunPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              games[index]['name'],
+                              games[index]['name'], // Oyun adı
                               style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                             ),
                             SizedBox(height: 4.0),
                             Text(
-                              games[index]['description'],
+                              games[index]['description'], // Oyun açıklaması
                               style: TextStyle(fontSize: 16.0),
                             ),
                           ],
@@ -150,4 +128,3 @@ class _oyunPageState extends State<oyunPage> {
     );
   }
 }
-
