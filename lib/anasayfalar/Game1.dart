@@ -1,7 +1,9 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 class Game1 extends StatefulWidget {
   @override
@@ -14,12 +16,17 @@ class _Game1State extends State<Game1> {
   List<String> options = [];
   bool isLoading = false;
   int correctAnswers = 0;
+  int wrongAnswers = 0;
   int questionCount = 0;
   String correctOption = '';
+  int score = 0;
+  String userId = '';
+  String gameTitle = 'Resim Oyunu';
 
   @override
   void initState() {
     super.initState();
+    userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     fetchGameData();
   }
 
@@ -29,37 +36,30 @@ class _Game1State extends State<Game1> {
     });
 
     try {
-      // Firestore'dan tüm soruları çek
       QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('games')
           .get();
 
-      // Tüm belgeleri listeye dönüştür
       List<QueryDocumentSnapshot> documents = snapshot.docs;
 
       if (documents.isNotEmpty) {
-        // Rastgele bir belge seç
         Random random = Random();
         int randomIndex = random.nextInt(documents.length);
         DocumentSnapshot selectedDoc = documents[randomIndex];
 
-        // Rastgele seçilen belgeden verileri al
         Map<String, dynamic>? data = selectedDoc.data() as Map<String, dynamic>?;
 
         if (data != null) {
-          // Belgedeki tüm "question" anahtarlarını alın
           List<String> questionKeys = data.keys.where((key) => key.startsWith('question')).toList();
 
           if (questionKeys.isNotEmpty) {
-            // Rastgele bir "question" anahtarı seç
             String randomQuestionKey = questionKeys[random.nextInt(questionKeys.length)];
             List<dynamic> questionData = data[randomQuestionKey];
             if (questionData.length >= 5) {
-              options = List<String>.from(questionData.sublist(0, 4)); // İlk 4 eleman seçenekler
-              correctOption = questionData[0]; // Doğru seçenek
-              String imagePath = questionData[4]; // 5. eleman resim yolu
+              options = List<String>.from(questionData.sublist(0, 4));
+              correctOption = questionData[0];
+              String imagePath = questionData[4];
 
-              // Firebase Storage'dan indirme URL'sini al
               String downloadUrl = await FirebaseStorage.instance
                   .ref(imagePath)
                   .getDownloadURL();
@@ -67,7 +67,7 @@ class _Game1State extends State<Game1> {
               setState(() {
                 imageUrl = downloadUrl;
                 selectedOption = '';
-                options.shuffle(); // Seçenekleri karıştır
+                options.shuffle();
               });
             } else {
               print('Error: Question data does not have enough elements.');
@@ -98,20 +98,23 @@ class _Game1State extends State<Game1> {
     Color backgroundColor;
     if (isCorrect) {
       correctAnswers++;
+      score += 2;
       feedbackMessage = 'Doğru!';
-      backgroundColor = Colors.green; // Yeşil arka plan
+      backgroundColor = Colors.green;
     } else {
-      feedbackMessage = 'Yanlış!.';
-      backgroundColor = Colors.red; // Kırmızı arka plan
+      wrongAnswers++;
+      score -= 1;
+      feedbackMessage = 'Yanlış!';
+      backgroundColor = Colors.red;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           feedbackMessage,
-          style: TextStyle(color: Colors.white), // SnackBar metin rengi
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: backgroundColor, // SnackBar arka plan rengi
+        backgroundColor: backgroundColor,
         duration: Duration(seconds: 1),
       ),
     );
@@ -120,24 +123,25 @@ class _Game1State extends State<Game1> {
       selectedOption = option;
     });
 
-    // Cevap verildikten sonra bir süre bekleyip yeni soru yükle
     Future.delayed(Duration(seconds: 2), () {
       if (questionCount < 5) {
         fetchGameData();
       } else {
+        updateGameStats(userId, gameTitle, correctAnswers, wrongAnswers, score);
         showGameOverDialog();
       }
     });
   }
-
 
   void showGameOverDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Oyun Bitti!",style: TextStyle(fontWeight: FontWeight.bold),),
-          content: Text("Toplam Doğru Sayısı: $correctAnswers",style: TextStyle(fontWeight: FontWeight.w500),),
+          title: Text("Oyun Bitti!", style: TextStyle(fontWeight: FontWeight.bold)),
+          content: Text(
+              "Toplam Doğru Sayısı: $correctAnswers\nToplam Yanlış Sayısı: $wrongAnswers\nToplam Puan: $score",
+              style: TextStyle(fontWeight: FontWeight.w500)),
           actions: [
             TextButton(
               child: Text("OK"),
@@ -149,12 +153,12 @@ class _Game1State extends State<Game1> {
           ],
         );
       },
-      barrierDismissible: false, // Çarpı butonunu kapatır
+      barrierDismissible: false,
     );
   }
 
   void exitGame() {
-    Navigator.of(context).pop(); // Dialogu kapat
+    Navigator.of(context).pop();
   }
 
   @override
@@ -162,7 +166,7 @@ class _Game1State extends State<Game1> {
     return Scaffold(
       backgroundColor: Colors.deepOrange,
       appBar: AppBar(
-        title: Text('Resim Oyunu',style: TextStyle(fontWeight: FontWeight.bold),),
+        title: Text('Resim Oyunu', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.deepOrange,
       ),
       body: Padding(
@@ -170,13 +174,13 @@ class _Game1State extends State<Game1> {
         child: isLoading
             ? Center(child: CircularProgressIndicator())
             : Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Card(
-                elevation: 8,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -189,8 +193,7 @@ class _Game1State extends State<Game1> {
                     SizedBox(height: 20),
                     Text(
                       'Which one is this?',
-                      style: TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -202,9 +205,7 @@ class _Game1State extends State<Game1> {
                 onOptionSelected(option);
               },
               child: Card(
-                color: selectedOption == option
-                    ? Colors.deepOrange
-                    : Colors.white,
+                color: selectedOption == option ? Colors.deepOrange : Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
@@ -230,4 +231,38 @@ class _Game1State extends State<Game1> {
       ),
     );
   }
+  Future<void> updateGameStats(String userId, String gameTitle, int correctAnswers, int wrongAnswers, int score) async {
+    final docRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('gameStats')
+        .doc(gameTitle);
+
+    final doc = await docRef.get();
+
+    if (doc.exists) {
+      final data = doc.data() as Map<String, dynamic>;
+
+      int currentCorrectAnswers = data['correctAnswers'] ?? 0;
+      int currentWrongAnswers = data['wrongAnswers'] ?? 0;
+      int currentScore = data['score'] ?? 0;
+
+      currentCorrectAnswers += correctAnswers;
+      currentWrongAnswers += wrongAnswers;
+      currentScore += score;
+
+      await docRef.update({
+        'correctAnswers': currentCorrectAnswers,
+        'wrongAnswers': currentWrongAnswers,
+        'score': currentScore,
+      });
+    } else {
+      await docRef.set({
+        'correctAnswers': correctAnswers,
+        'wrongAnswers': wrongAnswers,
+        'score': score,
+      });
+    }
+  }
+
 }

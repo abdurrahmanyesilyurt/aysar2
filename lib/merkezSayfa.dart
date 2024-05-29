@@ -1,5 +1,5 @@
 import 'package:aysar2/anasayfalar/oyunPage.dart';
-import 'package:aysar2/anasayfalar/siralamaPage.dart';
+import 'package:aysar2/anasayfalar/SiralamaPage.dart';
 import 'package:aysar2/profil_sayfalar/profilPage.dart';
 import 'package:aysar2/sozluk_sayfalar/sozlukPage.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ class _merkezSayfaState extends State<merkezSayfa> {
 
   final List<Widget> _pages = [
     oyunPage(),
-    siralamaPage(),
+    SiralamaPage(),
     SozlukPage(),
     profilPage(),
   ];
@@ -45,7 +45,8 @@ class _merkezSayfaState extends State<merkezSayfa> {
           BottomNavigationBarItem(icon: Icon(Icons.gamepad), label: 'AnaSayfa', backgroundColor: Colors.deepOrange),
           BottomNavigationBarItem(icon: Icon(Icons.event_note), label: 'Sıralama', backgroundColor: Colors.deepPurple),
           BottomNavigationBarItem(icon: Icon(Icons.translate), label: 'Sözlük', backgroundColor: Colors.cyan),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil', backgroundColor: Colors.cyan),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil',backgroundColor: Colors.blueGrey,
+          ),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,

@@ -1,8 +1,10 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'dart:math';
 
 class Game2 extends StatefulWidget {
   @override
@@ -15,13 +17,18 @@ class _Game2State extends State<Game2> {
   List<String> options = [];
   bool isLoading = false;
   int correctAnswers = 0;
+  int wrongAnswers = 0;
   int questionCount = 0;
   String correctOption = '';
   VideoPlayerController? _controller;
+  String userId = '';
+  String gameTitle = 'Video Oyunu';
+  int score = 0;
 
   @override
   void initState() {
     super.initState();
+    userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     fetchGameData();
   }
 
@@ -31,37 +38,30 @@ class _Game2State extends State<Game2> {
     });
 
     try {
-      // Firestore'dan tüm soruları çek
       QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('games2')
           .get();
 
-      // Tüm belgeleri listeye dönüştür
       List<QueryDocumentSnapshot> documents = snapshot.docs;
 
       if (documents.isNotEmpty) {
-        // Rastgele bir belge seç
         Random random = Random();
         int randomIndex = random.nextInt(documents.length);
         DocumentSnapshot selectedDoc = documents[randomIndex];
 
-        // Rastgele seçilen belgeden verileri al
         Map<String, dynamic>? data = selectedDoc.data() as Map<String, dynamic>?;
 
         if (data != null) {
-          // Belgedeki tüm "question" anahtarlarını alın
           List<String> questionKeys = data.keys.where((key) => key.startsWith('question')).toList();
 
           if (questionKeys.isNotEmpty) {
-            // Rastgele bir "question" anahtarı seç
             String randomQuestionKey = questionKeys[random.nextInt(questionKeys.length)];
             List<dynamic> questionData = data[randomQuestionKey];
             if (questionData.length >= 5) {
-              options = List<String>.from(questionData.sublist(0, 4)); // İlk 4 eleman seçenekler
-              correctOption = questionData[0]; // Doğru seçenek
-              String videoPath = questionData[4]; // 5. eleman video yolu
+              options = List<String>.from(questionData.sublist(0, 4));
+              correctOption = questionData[0];
+              String videoPath = questionData[4];
 
-              // Firebase Storage'dan indirme URL'sini al
               String downloadUrl = await FirebaseStorage.instance
                   .ref(videoPath)
                   .getDownloadURL();
@@ -69,7 +69,7 @@ class _Game2State extends State<Game2> {
               setState(() {
                 videoUrl = downloadUrl;
                 selectedOption = '';
-                options.shuffle(); // Seçenekleri karıştır
+                options.shuffle();
                 _controller?.dispose();
                 _controller = VideoPlayerController.network(videoUrl)
                   ..initialize().then((_) {
@@ -106,20 +106,23 @@ class _Game2State extends State<Game2> {
     Color backgroundColor;
     if (isCorrect) {
       correctAnswers++;
+      score += 4; // Doğru cevap için 2 puan ekle
       feedbackMessage = 'Doğru!';
-      backgroundColor = Colors.green; // Yeşil arka plan
+      backgroundColor = Colors.green;
     } else {
-      feedbackMessage = 'Yanlış!.';
-      backgroundColor = Colors.red; // Kırmızı arka plan
+      wrongAnswers++;
+      score -= 2; // Yanlış cevap için 1 puan çıkar
+      feedbackMessage = 'Yanlış!';
+      backgroundColor = Colors.red;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           feedbackMessage,
-          style: TextStyle(color: Colors.white), // SnackBar metin rengi
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: backgroundColor, // SnackBar arka plan rengi
+        backgroundColor: backgroundColor,
         duration: Duration(seconds: 1),
       ),
     );
@@ -128,11 +131,11 @@ class _Game2State extends State<Game2> {
       selectedOption = option;
     });
 
-    // Cevap verildikten sonra bir süre bekleyip yeni soru yükle
     Future.delayed(Duration(seconds: 2), () {
       if (questionCount < 5) {
         fetchGameData();
       } else {
+        updateGameStats(userId, gameTitle, correctAnswers, wrongAnswers, score);
         showGameOverDialog();
       }
     });
@@ -143,8 +146,10 @@ class _Game2State extends State<Game2> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Oyun Bitti!",style: TextStyle(fontWeight: FontWeight.bold),),
-          content: Text("Toplam Doğru Sayısı: $correctAnswers",style: TextStyle(fontWeight: FontWeight.w500),),
+          title: Text("Oyun Bitti!", style: TextStyle(fontWeight: FontWeight.bold)),
+          content: Text(
+              "Toplam Doğru Sayısı: $correctAnswers\nToplam Yanlış Sayısı: $wrongAnswers\nToplam Puan: $score",
+              style: TextStyle(fontWeight: FontWeight.w500)),
           actions: [
             TextButton(
               child: Text("OK"),
@@ -156,12 +161,12 @@ class _Game2State extends State<Game2> {
           ],
         );
       },
-      barrierDismissible: false, // Çarpı butonunu kapatır
+      barrierDismissible: false,
     );
   }
 
   void exitGame() {
-    Navigator.of(context).pop(); // Dialogu kapat
+    Navigator.of(context).pop();
   }
 
   @override
@@ -175,7 +180,7 @@ class _Game2State extends State<Game2> {
     return Scaffold(
       backgroundColor: Colors.deepOrange,
       appBar: AppBar(
-        title: Text('Video Oyunu',style: TextStyle(fontWeight: FontWeight.bold),),
+        title: Text('Video Oyunu', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.deepOrange,
       ),
       body: Padding(
@@ -231,6 +236,50 @@ class _Game2State extends State<Game2> {
       ),
     );
   }
+  Future<Map<String, dynamic>> getGameStats(String userId, String gameTitle) async {
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('gameStats')
+        .doc(gameTitle)
+        .get();
+    return doc.data() ?? {};
+  }
+
+  Future<void> updateGameStats(String userId, String gameTitle, int correctAnswers, int wrongAnswers, int score) async {
+    final docRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('gameStats')
+        .doc(gameTitle);
+
+    final doc = await docRef.get();
+
+    if (doc.exists) {
+      final data = doc.data() as Map<String, dynamic>;
+
+      int currentCorrectAnswers = data['correctAnswers'] ?? 0;
+      int currentWrongAnswers = data['wrongAnswers'] ?? 0;
+      int currentScore = data['score'] ?? 0;
+
+      currentCorrectAnswers += correctAnswers;
+      currentWrongAnswers += wrongAnswers;
+      currentScore += score;
+
+      await docRef.update({
+        'correctAnswers': currentCorrectAnswers,
+        'wrongAnswers': currentWrongAnswers,
+        'score': currentScore,
+      });
+    } else {
+      await docRef.set({
+        'correctAnswers': correctAnswers,
+        'wrongAnswers': wrongAnswers,
+        'score': score,
+      });
+    }
+  }
+
 }
 
 class OptionButton extends StatelessWidget {

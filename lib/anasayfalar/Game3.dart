@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Game3 extends StatefulWidget {
@@ -15,9 +16,20 @@ class _Game3State extends State<Game3> {
   List<String> options = [];
   bool isLoading = false;
   int correctAnswers = 0;
+  int wrongAnswers = 0;
   int questionCount = 0;
   String correctOption = '';
   String question = '';
+  String userId = '';
+  String gameTitle = 'Kelime Oyunu';
+  int score = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+    fetchGameData();
+  }
 
   Future<void> fetchGameData() async {
     setState(() {
@@ -69,6 +81,7 @@ class _Game3State extends State<Game3> {
         isLoading = false;
         questionCount++;
         if (questionCount >= 5) {
+          updateGameStats(userId, gameTitle, correctAnswers, wrongAnswers, score);
           showResultDialog(); // 5. sorudan sonra sonucu göster
         }
       });
@@ -82,6 +95,7 @@ class _Game3State extends State<Game3> {
 
     if (option == correctOption) {
       correctAnswers++;
+      score += 2; // Doğru cevap için 2 puan ekle
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Doğru!'),
@@ -89,6 +103,8 @@ class _Game3State extends State<Game3> {
         ),
       );
     } else {
+      wrongAnswers++;
+      score -= 1; // Yanlış cevap için 1 puan çıkar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Yanlış!'),
@@ -109,7 +125,7 @@ class _Game3State extends State<Game3> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Oyun Bitti'),
-          content: Text('Toplam doğru cevap sayınız: $correctAnswers'),
+          content: Text('Toplam doğru cevap sayınız: $correctAnswers\nToplam yanlış cevap sayınız: $wrongAnswers\nToplam puanınız: $score'),
           actions: [
             TextButton(
               child: Text('Tamam'),
@@ -122,12 +138,6 @@ class _Game3State extends State<Game3> {
         );
       },
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchGameData();
   }
 
   @override
@@ -191,6 +201,50 @@ class _Game3State extends State<Game3> {
       ),
     );
   }
+  Future<Map<String, dynamic>> getGameStats(String userId, String gameTitle) async {
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('gameStats')
+        .doc(gameTitle)
+        .get();
+    return doc.data() ?? {};
+  }
+
+  Future<void> updateGameStats(String userId, String gameTitle, int correctAnswers, int wrongAnswers, int score) async {
+    final docRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('gameStats')
+        .doc(gameTitle);
+
+    final doc = await docRef.get();
+
+    if (doc.exists) {
+      final data = doc.data() as Map<String, dynamic>;
+
+      int currentCorrectAnswers = data['correctAnswers'] ?? 0;
+      int currentWrongAnswers = data['wrongAnswers'] ?? 0;
+      int currentScore = data['score'] ?? 0;
+
+      currentCorrectAnswers += correctAnswers;
+      currentWrongAnswers += wrongAnswers;
+      currentScore += score;
+
+      await docRef.update({
+        'correctAnswers': currentCorrectAnswers,
+        'wrongAnswers': currentWrongAnswers,
+        'score': currentScore,
+      });
+    } else {
+      await docRef.set({
+        'correctAnswers': correctAnswers,
+        'wrongAnswers': wrongAnswers,
+        'score': score,
+      });
+    }
+  }
+
 }
 
 class OptionButton extends StatelessWidget {

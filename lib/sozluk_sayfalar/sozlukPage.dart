@@ -20,7 +20,9 @@ class SozlukPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.cyan,
       appBar: AppBar(
+        backgroundColor: Colors.cyan,
         leading: IconButton(onPressed: () {}, icon: const Icon(Icons.g_translate)),
         title: Text("Sözlük Sayfası", style: Theme.of(context).textTheme.headlineSmall),
       ),

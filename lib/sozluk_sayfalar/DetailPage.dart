@@ -8,7 +8,9 @@ class DetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Map<String, String>> phrases = category["phrases"];
     return Scaffold(
+      backgroundColor: Colors.cyan,
       appBar: AppBar(
+        backgroundColor: Colors.cyan,
         title: Text('${category["kategori"] ?? "Kategori"} İfadeleri'),
       ),
       body: ListView.builder(
