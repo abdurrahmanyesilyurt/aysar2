@@ -1,5 +1,5 @@
 import 'package:aysar2/anasayfalar/oyunPage.dart';
-import 'package:aysar2/anasayfalar/siralamaPage.dart';
+import 'package:aysar2/anasayfalar/SiralamaPage.dart';
 import 'package:aysar2/profil_sayfalar/profilPage.dart';
 import 'package:aysar2/sozluk_sayfalar/sozlukPage.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ class _merkezSayfaState extends State<merkezSayfa> {
 
   final List<Widget> _pages = [
     oyunPage(),
-    siralamaPage(),
+    SiralamaPage(),
     SozlukPage(),
     profilPage(),
   ];
