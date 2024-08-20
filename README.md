@@ -21,7 +21,10 @@ Veritabanı olarak ise Firebase'in Firestore hizmetini tercih ettik. Firestore, 
 ![image](https://github.com/user-attachments/assets/57d705ef-1420-4241-b77d-37ea79a1d98a)
 
 #### Sözlük sayfalarımız 
-![image](https://github.com/user-attachments/assets/bc916994-c320-4cb1-8419-0ad5209e43b5),
-![image](https://github.com/user-attachments/assets/ff4850c8-8425-4e4c-9835-bf2c2cd4fed9),
-![image](https://github.com/user-attachments/assets/8da850d2-fa84-4523-864c-4aaab3404c97),
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/user-attachments/assets/bc916994-c320-4cb1-8419-0ad5209e43b5" alt="image1" style="width: 32%;"/>
+  <img src="https://github.com/user-attachments/assets/ff4850c8-8425-4e4c-9835-bf2c2cd4fed9" alt="image2" style="width: 32%;"/>
+  <img src="https://github.com/user-attachments/assets/8da850d2-fa84-4523-864c-4aaab3404c97" alt="image3" style="width: 32%;"/>
+</div>
+
 
