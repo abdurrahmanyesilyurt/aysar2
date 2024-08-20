@@ -30,17 +30,22 @@ Bu proje, dil öğreniminin geleneksel yöntemlerine alternatif sunarak teknoloj
  ## Sayfalarımız
 
 #### Giriş ve Kayıt ol Sayfalarımız
-![image](https://github.com/user-attachments/assets/a348deb3-5a5c-4e32-a5fd-d0132af2d0c6),
-![image](https://github.com/user-attachments/assets/b1b21d3d-f43a-4ec7-b9a1-5091a6696100)
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/user-attachments/assets/a348deb3-5a5c-4e32-a5fd-d0132af2d0c6" alt="image1" style="width: 48%;"/>
+  <img src="https://github.com/user-attachments/assets/b1b21d3d-f43a-4ec7-b9a1-5091a6696100" alt="image2" style="width: 48%;"/>
+</div>
 
-#### Oyun Sayfalarımız 
-
-![image](https://github.com/user-attachments/assets/f72d18c9-0985-4d35-ad14-bad540762d0b),
-![image](https://github.com/user-attachments/assets/f2241922-cd6a-4d1d-a13c-54a193eae9f2)
+#### Oyun Sayfalarımız
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/user-attachments/assets/f72d18c9-0985-4d35-ad14-bad540762d0b" alt="image1" style="width: 48%;"/>
+  <img src="https://github.com/user-attachments/assets/f2241922-cd6a-4d1d-a13c-54a193eae9f2" alt="image2" style="width: 48%;"/>
+</div>
 
 #### Profil ve Sıralama Sayfalarımız
-![image](https://github.com/user-attachments/assets/c43d3d83-c749-4aa5-8385-4d9dcd83d389),
-![image](https://github.com/user-attachments/assets/57d705ef-1420-4241-b77d-37ea79a1d98a)
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/user-attachments/assets/c43d3d83-c749-4aa5-8385-4d9dcd83d389" alt="image1" style="width: 48%;"/>
+  <img src="https://github.com/user-attachments/assets/57d705ef-1420-4241-b77d-37ea79a1d98a" alt="image2" style="width: 48%;"/>
+</div>
 
 #### Sözlük sayfalarımız 
 <div style="display: flex; justify-content: space-between;">
