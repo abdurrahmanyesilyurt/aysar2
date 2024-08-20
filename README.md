@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/d1b2bc13-ddf4-40fe-9df3-47f6f5801b4b)# aysar2
+# aysar2
 
 ## Konya Teknik Üniversitesi 3. sınıf dönem projesi olarak, Melek Alyoncu ile birlikte geliştirdiğimiz Projemiz : 
 Flutter framework'ü kullanılarak Dart programlama dili ile oluşturulmuştur. Flutter, kullanıcı dostu ve performanslı mobil uygulamalar geliştirmek için ideal bir platform sunar ve bu projede hem kullanıcı arayüzü hem de arka plan işlemleri için etkili bir şekilde kullanılmıştır.
