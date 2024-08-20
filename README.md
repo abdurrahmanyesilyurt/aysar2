@@ -8,7 +8,7 @@ Veritabanı olarak ise Firebase'in Firestore hizmetini tercih ettik. Firestore, 
 > ### Sayfalarımız
 
 #### Register Sayfası
-![image](https://github.com/user-attachments/assets/a348deb3-5a5c-4e32-a5fd-d0132af2d0c6) 
+![image](https://github.com/user-attachments/assets/a348deb3-5a5c-4e32-a5fd-d0132af2d0c6),
 
 #### Login Sayfası
 ![image](https://github.com/user-attachments/assets/b1b21d3d-f43a-4ec7-b9a1-5091a6696100)
