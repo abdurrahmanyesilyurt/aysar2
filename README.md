@@ -1,5 +1,6 @@
 # İngilizce/Türkçe Dil Geliştirme Uygulaması
-Konya Teknik Üniversitesi 3. sınıf dönem projesi olarak, Melek Kalyoncuoğlu ile birlikte geliştirdiğimiz bu proje, mobil cihazlar için interaktif bir dil geliştirme uygulamasıdır. Uygulama, Flutter framework'ü kullanılarak Dart programlama dili ile geliştirilmiştir.
+Konya Teknik Üniversitesi 3. sınıf dönem projesi olarak, [Melek Kalyoncuoğlu](https://github.com/melekalyoncu) ile birlikte geliştirdiğimiz bu proje, mobil cihazlar için interaktif bir dil geliştirme uygulamasıdır. Uygulama, Flutter framework'ü kullanılarak Dart programlama dili ile geliştirilmiştir.
+
 ## Projenin Amacı:
 Bu proje, kullanıcıların İngilizce ve Türkçe dil becerilerini eğlenceli ve etkileşimli bir şekilde geliştirmelerine yardımcı olmayı hedeflemektedir. Dil öğrenme sürecini oyunlaştırarak kullanıcıların motivasyonunu artırmayı ve dil öğrenmeyi daha etkili hale getirmeyi amaçlıyoruz.
 
