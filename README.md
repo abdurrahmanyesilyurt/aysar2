@@ -1,11 +1,32 @@
-# aysar2
+# İngilizce/Türkçe Dil Geliştirme Uygulaması
+Konya Teknik Üniversitesi 3. sınıf dönem projesi olarak, Melek Alyoncu ile birlikte geliştirdiğimiz bu proje, mobil cihazlar için interaktif bir dil geliştirme uygulamasıdır. Uygulama, Flutter framework'ü kullanılarak Dart programlama dili ile geliştirilmiştir.
+## Projenin Amacı:
+Bu proje, kullanıcıların İngilizce ve Türkçe dil becerilerini eğlenceli ve etkileşimli bir şekilde geliştirmelerine yardımcı olmayı hedeflemektedir. Dil öğrenme sürecini oyunlaştırarak kullanıcıların motivasyonunu artırmayı ve dil öğrenmeyi daha etkili hale getirmeyi amaçlıyoruz.
 
-## Konya Teknik Üniversitesi 3. sınıf dönem projesi olarak, Melek Alyoncu ile birlikte geliştirdiğimiz Projemiz : 
-Flutter framework'ü kullanılarak Dart programlama dili ile oluşturulmuştur. Flutter, kullanıcı dostu ve performanslı mobil uygulamalar geliştirmek için ideal bir platform sunar ve bu projede hem kullanıcı arayüzü hem de arka plan işlemleri için etkili bir şekilde kullanılmıştır.
-Veri yönetimi ve kullanıcı kimlik doğrulama işlemleri için Firebase platformundan yararlandık. Özellikle, kullanıcıların güvenli bir şekilde giriş yapmasını sağlamak için Firebase Authentication kullanılmıştır. Bu sayede kullanıcılar hesap oluşturma, oturum açma ve hesaplarını yönetme işlemlerini güvenli bir şekilde gerçekleştirebilmiştir.
-Veritabanı olarak ise Firebase'in Firestore hizmetini tercih ettik. Firestore, esnek veri yapısı ve yüksek performanslı sorgulama yetenekleri sayesinde uygulamanın verilerini yönetmede önemli bir rol oynamıştır. Gerçek zamanlı veri senkronizasyonu yerine, Firestore'un sunduğu bulut tabanlı veritabanı sistemi ile veriler güvenli ve ölçeklenebilir bir şekilde depolanmış ve yönetilmiştir. Bu sayede uygulama, veri depolama ve erişim süreçlerinde daha esnek ve güçlü bir altyapı ile donatılmıştır.
-
-> ### Sayfalarımız
+## Kullanılan Teknolojiler:
+### Flutter ve Dart:
+Uygulamanın hem kullanıcı arayüzü hem de arka plan işlemleri Flutter framework'ü ile geliştirilmiştir. Bu sayede kullanıcı dostu ve performanslı bir mobil deneyim sunulmuştur.
+### Firebase Authentication: 
+Kullanıcıların güvenli bir şekilde hesap oluşturma, oturum açma ve hesap yönetimi işlemlerini gerçekleştirmelerini sağladık.
+### Firestore:
+Veritabanı yönetimi için Firebase'in Firestore hizmeti kullanıldı. Firestore, esnek veri yapısı ve yüksek performanslı sorgulama yetenekleri ile verileri güvenli ve ölçeklenebilir bir şekilde depolamamıza olanak tanıdı.
+## Projenin Aşamaları:
+### Giriş ve Kayıt Ekranı:
+Kullanıcıların e-posta ve şifre ile giriş yapmalarına veya kayıt olmalarına olanak tanıyan ekran tasarlandı ve geliştirildi.
+### Sözlük Menüsü: 
+Kullanıcılar için kalıp ve kelime çevirileri içeren bir menü tasarlandı ve uygulamaya entegre edildi.
+### Profil Sayfası: 
+Profil sayfası tamamen düzenlendi ve oyunlardan kazanılan puanları gösterebileceğimiz bir kısım eklendi.
+### Sıralama Sayfası:
+Tüm kullanıcılar, oyunlardan kazandıkları puanlara göre sıralanmaktadır.
+### Oyun Sayfası: 
+Üç çeşit oyun geliştirildi:
+- Resimlerden kelime tahmin etme
+- Videoda bulunan repliğin çevirisini yapma
+- Ekranda çıkan cümlenin Türkçe çevirisini yapma
+## Projenin Önemi:
+Bu proje, dil öğreniminin geleneksel yöntemlerine alternatif sunarak teknolojiyi etkin bir şekilde kullanmaktadır. Eğlenceli ve etkileşimli bir öğrenme ortamı sunarak, dil öğrenimini daha verimli hale getiriyoruz. Ayrıca, kullanıcılar arasında rekabeti teşvik eden sıralama sistemi ile öğrenme sürecini daha motive edici hale getiriyoruz.
+> ## Sayfalarımız
 
 #### Giriş ve Kayıt ol Sayfalarımız
 ![image](https://github.com/user-attachments/assets/a348deb3-5a5c-4e32-a5fd-d0132af2d0c6),
